@@ -28,7 +28,7 @@ const cat = {
     species: 'cat',
     color: 'black',
     action: function(action) {
-        console.log(`You ${action} the ${this.color} ${this.species}`);
+        console.log(`You ${action} the ${this.color} ${this.species}`); //this is referring to the cat object it's referenced in
     }
 };
 
@@ -46,7 +46,7 @@ function Animal(newanimal, color) {
     };
 };
 
-const dog = new Animal('dog', 'gray');
+const dog = new Animal('dog', 'gray');  //making a new instance of an object
 dog.action('pet');
 
 // Principle 4
