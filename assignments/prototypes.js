@@ -169,11 +169,12 @@ Humanoid.prototype.greet = function() {
   }
 
   Villain.prototype.apologize = function(hero) {
+    let heal = Math.floor(Math.random() * 5);
     if(this.healthPoints <= 0){
       return `${this.name} attempted to say sorry but is already done for. It's too late to 'pologize. Nice try.`
     }
-    this.healthPoints += 2;
-    return `${this.name} apologized to ${hero.name} and gained 2 HP. Sorry!`
+    this.healthPoints += heal;
+    return `${this.name} apologized to ${hero.name} and gained ${heal}HP. Sorry!`
   }
 
   function Hero(hero){
@@ -185,11 +186,12 @@ Humanoid.prototype.greet = function() {
   Hero.prototype = Object.create(CharacterStats.prototype);
 
   Hero.prototype.giveCompliment = function(villain) {
+    let heal = Math.floor(Math.random() * 8);
     if(this.healthPoints <= 0){
       return `${this.name} is already done for and can't give compliments. Nice try.`
     }
-    this.healthPoints += 5;
-    return `${this.name} gave ${villain.name} a compliment and gained 5 HP for a total of ${this.healthPoints} HP!`
+    this.healthPoints += heal;
+    return `${this.name} gave ${villain.name} a compliment and gained ${heal}HP for a total of ${this.healthPoints} HP!`
   }
 
   Hero.prototype.guiltTrip = function(villain) {
@@ -234,7 +236,7 @@ Humanoid.prototype.greet = function() {
       width: 1,
       height: 3,
     },
-    healthPoints: 10,
+    healthPoints: 8,
     name: 'Captain Nice Guy',
     team: 'The Good Guys',
     weapons: [
