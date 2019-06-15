@@ -16,6 +16,17 @@
   * destroy() // prototype method that returns: `${this.name} was removed from the game.`
 */
 
+function GameObject(attributes){
+  this.createdAt = attributes.createdAt;
+  this.name = attributes.name;
+  this.dimensions = attributes.dimensions;
+}
+
+GameObject.prototype.destroy = function() {
+  this.healthPoints = 0;
+  return `${this.name} was removed from the game.`
+}
+
 /*
   === CharacterStats ===
   * healthPoints
@@ -23,6 +34,16 @@
   * should inherit destroy() from GameObject's prototype
 */
 
+function CharacterStats(stats){
+  GameObject.call(this, stats); //binds to GameObject for inheritence 
+  this.healthPoints = stats.healthPoints; //special attribute to CharacterStats
+}
+
+CharacterStats.prototype = Object.create(GameObject.prototype);
+
+CharacterStats.prototype.takeDamage = function() {
+  return `${this.name} took damage.`
+}
 /*
   === Humanoid (Having an appearance or character resembling that of a human.) ===
   * team
@@ -33,6 +54,20 @@
   * should inherit takeDamage() from CharacterStats
 */
  
+function Humanoid(char){
+  GameObject.call(this, char); //binds to GameObject for inheritence 
+  CharacterStats.call(this, char); //binds to CharacterStats for inheritence 
+  this.team = char.team;
+  this.weapons = char.weapons;
+  this.language = char.language;
+}
+
+Humanoid.prototype = Object.create(GameObject.prototype);
+Humanoid.prototype = Object.create(CharacterStats.prototype);
+
+Humanoid.prototype.greet = function() {
+  return `${this.name} offers a greeting in ${this.language}.`
+}
 /*
   * Inheritance chain: GameObject -> CharacterStats -> Humanoid
   * Instances of Humanoid should have all of the same properties as CharacterStats and GameObject.
@@ -41,7 +76,7 @@
 
 // Test you work by un-commenting these 3 objects and the list of console logs below:
 
-/*
+
   const mage = new Humanoid({
     createdAt: new Date(),
     dimensions: {
@@ -102,9 +137,125 @@
   console.log(archer.greet()); // Lilith offers a greeting in Elvish.
   console.log(mage.takeDamage()); // Bruce took damage.
   console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
-*/
+
 
   // Stretch task: 
   // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.  
   // * Give the Hero and Villains different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
   // * Create two new objects, one a villain and one a hero and fight it out with methods!
+
+  function Villain(villain){
+    Humanoid.call(this, villain); //binds to Humanoid for inheritence 
+    this.evillaugh = villain.evillaugh;
+    this.minion = villain.minion;
+  }
+
+  Villain.prototype = Object.create(Humanoid.prototype);
+
+  Villain.prototype.throwShade = function(hero) {
+    let dmg = Math.floor(Math.random() * 5);
+    if(hero.healthPoints <= 0){
+      return `${hero.name} is already dead and can't get their feelings hurt anymore.`
+    }
+    else if(dmg === 0){
+      return `No good, try again. 0 damage.`
+    }
+    else if(hero.healthPoints <= dmg){
+      hero.healthPoints -= dmg;
+      return `${this.name} threw shade at ${hero.name} for ${dmg}HP damage and knocked them out!`
+    }
+    hero.healthPoints -= dmg;
+    return `${this.name} threw shade at ${hero.name} and hurt their feelings ${dmg}HP damage. That wasn't very nice.`
+  }
+
+  Villain.prototype.apologize = function(hero) {
+    let heal = Math.floor(Math.random() * 5);
+    if(this.healthPoints <= 0){
+      return `${this.name} attempted to say sorry but is already done for. It's too late to 'pologize. Nice try.`
+    }
+    this.healthPoints += heal;
+    return `${this.name} apologized to ${hero.name} and gained ${heal}HP. Sorry!`
+  }
+
+  function Hero(hero){
+    Humanoid.call(this, hero); //binds to Humanoid for inheritence 
+    this.motto = hero.motto;
+    this.costume = hero.costume;
+  }
+
+  Hero.prototype = Object.create(CharacterStats.prototype);
+
+  Hero.prototype.giveCompliment = function(villain) {
+    let heal = Math.floor(Math.random() * 8);
+    if(this.healthPoints <= 0){
+      return `${this.name} is already done for and can't give compliments. Nice try.`
+    }
+    this.healthPoints += heal;
+    return `${this.name} gave ${villain.name} a compliment and gained ${heal}HP for a total of ${this.healthPoints} HP!`
+  }
+
+  Hero.prototype.guiltTrip = function(villain) {
+    let dmg = Math.floor(Math.random() * 5);
+    if(villain.healthPoints <= 0){
+      return `${villain.name} is already dead and can't feel guilty.`
+    }
+    else if(dmg === 0){
+      return `That was a bad guilt trip, they don't feel guilty at all. 0 damage.`
+    }
+    else if(villain.healthPoints <= dmg){
+      villain.healthPoints -= dmg;
+      return `${this.name} guilt tripped ${villain.name} for ${dmg}HP damage and knocked them out!`
+    }
+    villain.healthPoints -= dmg;
+    return `${this.name} guilt tripped ${villain.name} and now they feel bad. ${dmg}HP damage.`
+  }
+
+
+  const drDrama = new Villain({
+    createdAt: new Date(),
+    dimensions: {
+      length: 3,
+      width: 2,
+      height: 4,
+    },
+    healthPoints: 10,
+    name: 'Dr. Drama',
+    team: 'The Bad Guys',
+    weapons: [
+      'Social Media',
+    ],
+    language: 'Gossip Speak',
+    evillaugh: 'Muwhahaha',
+    minion: 'Yippy Dog',
+  });
+
+  const niceGuy = new Hero({
+    createdAt: new Date(),
+    dimensions: {
+      length: 5,
+      width: 1,
+      height: 3,
+    },
+    healthPoints: 8,
+    name: 'Captain Nice Guy',
+    team: 'The Good Guys',
+    weapons: [
+      'Charitable Acts',
+    ],
+    language: 'Honesty',
+    motto: 'You Betcha!',
+    costume:'Spandex and Cape',
+  });
+
+
+
+  console.log(`Captain Nice Guy says, "${niceGuy.motto}"`);
+  console.log(`Captain Nice Guy's greatest method of attack is "${niceGuy.weapons}"`);
+  console.log(`Captain Nice Guy prefers to wear a costume of a "${niceGuy.costume}"`);
+  console.log(`Dr. Drama let out a big "${drDrama.evillaugh}"`);
+  console.log(`Dr. Drama's trusty sidekick is a ${drDrama.minion}`)
+  console.log(`Dr. Drama likes to use ${drDrama.weapons} in his method of attack`)
+  console.log(drDrama.throwShade(niceGuy)); 
+  console.log(niceGuy.giveCompliment(drDrama)); 
+  console.log(niceGuy.guiltTrip(drDrama)); 
+  console.log(drDrama.apologize(niceGuy)); 
